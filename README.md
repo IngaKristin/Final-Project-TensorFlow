@@ -1,5 +1,6 @@
 # Implementing ANNs with TensorFlow: Group 11
-## Léon Dankert, Vera Proiss, Inga Wohlert
+
+IANNwTF Seminar @uos Winter Term 2021/2022
 
 1. Our Google Colab: https://colab.research.google.com/drive/1jG3HQ3BvK9gg4CoiQalw4WzyJGpMfABL?usp=sharing
 

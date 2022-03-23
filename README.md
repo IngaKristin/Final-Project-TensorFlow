@@ -8,6 +8,9 @@ IANNwTF Seminar @uos Winter Term 2021/2022
 * [Git Workflow](#workflow)
 
 ## General Info
+This project is the reimplementation of ["Can GAN originate new electronic dance music genres?—Generating novel
+rhythm patterns using GAN with Genre Ambiguity Loss"](https://arxiv.org/pdf/2011.13062.pdf) paper by Tokui N. (2020, November 25).  
+
 ## Git Setup
 ## Git Workflow
 ### Cloning Repo

@@ -4,7 +4,7 @@ IANNwTF Seminar @uos Winter Term 2021/2022
 
 ## Table of contents
 * [General info](#general-info)
-* [Setuo](#setup)
+* [Setup](#setup)
 * [Workflow](#workflow)
 
 # Git SetUp & Workflows

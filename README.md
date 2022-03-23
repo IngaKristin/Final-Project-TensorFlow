@@ -6,6 +6,8 @@ IANNwTF Seminar @uos Winter Term 2021/2022
 * [General Info](#general-info)
 * [Git Setup](#git-setup)
 * [Git Workflow](#git-workflow)
+* [Google Colab](#google-colab)
+* [Overleaf Project](#overleaf-project)
 
 ## General Info
 This project is the reimplementation of ["Can GAN originate new electronic dance music genres?—Generating novel
@@ -17,7 +19,7 @@ rhythm patterns using GAN with Genre Ambiguity Loss"](https://arxiv.org/pdf/2011
 * [Download](https://git-scm.com/) 
 
 ## Git Workflow
-### Cloning Repo
+### Cloning a Repo
 
 ### Git Fetch 
 * Fetch all of the remote branches from the repository. This includes commits and files.
@@ -41,7 +43,9 @@ git pull <remote> <branch>
 
 ### Git Push
 
-### Branching & Merging
+### Git Branch
+
+### Git Merge
 
 ### General Workflow
 1. Create a new feature branch
@@ -60,6 +64,8 @@ git push <remote> <branch>
 8. Checkout main branch
 9. Pull main branch
 
-1. Our Google Colab: https://colab.research.google.com/drive/1jG3HQ3BvK9gg4CoiQalw4WzyJGpMfABL?usp=sharing
+## Google Colab
+* Our Overleaf Project: https://www.overleaf.com/project/62174cc1a2c7f12e89ab0af4
 
-2. Our Overleaf Project: https://www.overleaf.com/project/62174cc1a2c7f12e89ab0af4
+## Overleaf Project
+* Our Google Colab: https://colab.research.google.com/drive/1jG3HQ3BvK9gg4CoiQalw4WzyJGpMfABL?usp=sharing

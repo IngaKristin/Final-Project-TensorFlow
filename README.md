@@ -65,7 +65,7 @@ git push <remote> <branch>
 9. Pull main branch
 
 ## Google Colab
-* Our Overleaf Project: https://www.overleaf.com/project/62174cc1a2c7f12e89ab0af4
+* Our Google Colab: https://colab.research.google.com/drive/1jG3HQ3BvK9gg4CoiQalw4WzyJGpMfABL?usp=sharing
 
 ## Overleaf Project
-* Our Google Colab: https://colab.research.google.com/drive/1jG3HQ3BvK9gg4CoiQalw4WzyJGpMfABL?usp=sharing
+* Our Overleaf Project: https://www.overleaf.com/project/62174cc1a2c7f12e89ab0af4

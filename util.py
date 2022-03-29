@@ -53,3 +53,11 @@ DRUM_MIDI_MAP = [ # pianoroll to MIDI - reverse
     63, # 7 Percussion / Open Hi Conga
     39  # 8 Clap
 ]
+
+CHOOSEN_GENRE =[
+    "rock",
+    "funk",
+    "latin",
+    "jazz",
+    "hiphop"
+]

@@ -34,8 +34,6 @@ def duplicate_multiple_styles(data):
     return duplicated_datas
 
 
-
-
 def get_pianomatrices_of_drums(midi_file, binary="False"):
     """
     Loads a midi_file and converts it into a drum matrix.
@@ -69,7 +67,6 @@ def get_pianomatrices_of_drums(midi_file, binary="False"):
         beats_ticks.append(i * pm.resolution / 4)
 
     num_notes16 = len(beats_ticks)  # Number of all notes
-    print(num_notes16)
 
     drum_matrices = []  # create pianoroll matrix (resolution: 16th note))
 
@@ -87,8 +84,12 @@ def get_pianomatrices_of_drums(midi_file, binary="False"):
                     if note.pitch in MIDI_DRUM_MAP:
                         drum_note = MIDI_DRUM_MAP[note.pitch]
 
+                        # differentiate between binary and float outcome
+                        if binary:
+                            drum_matrix[idx_start - hops, drum_note] = 1
                         # relative velocity/intensity of the note
-                        drum_matrix[idx_start - hops, drum_note] = note.velocity / 127.
+                        else:
+                            drum_matrix[idx_start - hops, drum_note] = note.velocity / 127.
 
                     else:
                         if note.pitch not in missing_notes:

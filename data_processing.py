@@ -11,10 +11,11 @@ Author: LDankert
 from urllib.request import urlopen
 from io import BytesIO
 from zipfile import ZipFile
-from preprocessing_functions import duplicate_multiple_styles
+from preprocessing_functions import duplicate_multiple_styles, get_pianomatrices_of_drums
 
 import os.path
 import pandas as pd
+
 
 # Download datasets
 if not os.path.exists("data/groove"):
@@ -38,8 +39,13 @@ dataset_cleaned = dataset_cleaned[dataset_cleaned.beat_type != "fill"]
 # just keep the filepath and style
 dataset_cleaned = dataset_cleaned[["style", "midi_filename"]]
 
+# add correct file path to filename
+dataset_cleaned["midi_filename"] = "data/groove/" + dataset_cleaned["midi_filename"]
+
+dataset_cleaned["drum_matrices"] = [get_pianomatrices_of_drums(midi_file) for midi_file
+                                    in dataset_cleaned["midi_filename"]]
+
+print(dataset_cleaned.head())
+
 # save cleaned_data as pickle file for later use
 dataset_cleaned.to_pickle("data/cleaned_data.pkl")
-
-
-

@@ -12,7 +12,7 @@ import pandas as pd
 import numpy as np
 import pretty_midi
 
-from util import MIDI_DRUM_MAP, DRUM_CLASSES
+from util import MIDI_DRUM_MAP, DRUM_CLASSES, MIN_NB_ONSETS, NOTES_LENGTH
 
 
 def duplicate_multiple_styles(data):
@@ -45,11 +45,9 @@ def get_pianomatrices_of_drums(midi_file, binary="False"):
         drum_matrices (np.array): Array with onsets and velocity of the midi file
         size = (xx, notes_length, drumclasses)
     """
-    MIN_NB_ONSETS = 5  # ignore drum loops with onsets less than MIN_NB_ONSETS
 
     number_of_different_notes = len(DRUM_CLASSES)  # reduction of less note values
 
-    notes_length = 32  # number of notes per matrix
 
     # load midi file
     try:
@@ -75,12 +73,12 @@ def get_pianomatrices_of_drums(midi_file, binary="False"):
     for instrument in pm.instruments:
         # splits the whole song into smaller hops
         for hops in range(0, num_notes16 - 16, 16):  # hopsize = 1bar = 16 16th notes
-            drum_matrix = np.zeros((notes_length, number_of_different_notes), dtype='float')
+            drum_matrix = np.zeros((NOTES_LENGTH, number_of_different_notes), dtype='float')
 
             for note in instrument.notes:
                 idx_start = (np.abs(beats_ticks - pm.time_to_tick(note.start)).argmin())
 
-                if hops <= idx_start < hops + notes_length:
+                if hops <= idx_start < hops + NOTES_LENGTH:
                     if note.pitch in MIDI_DRUM_MAP:
                         drum_note = MIDI_DRUM_MAP[note.pitch]
 
@@ -97,7 +95,7 @@ def get_pianomatrices_of_drums(midi_file, binary="False"):
 
             if np.sum(drum_matrix > 0.) >= MIN_NB_ONSETS:
                 # ignore the last part of the midi file where rhythm ends in the first bar
-                if np.sum(drum_matrix[notes_length // 2:, :]) > 0:
+                if np.sum(drum_matrix[NOTES_LENGTH // 2:, :]) > 0:
                     drum_matrices.append(drum_matrix)
 
     if missing_notes:

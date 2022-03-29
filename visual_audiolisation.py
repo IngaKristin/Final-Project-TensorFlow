@@ -1,5 +1,9 @@
 """
-visual_audiolisation
+This module contains the function to visualize or audiolize the drum matrices:
+contains:
+    plot_drum_matrix(matrix)
+    play_drum_matrix(matrix, tempo):
+    get_audio_from_matrix(matrix, tempo):
 
 Created: 29.03.22, 15:33
 

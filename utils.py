@@ -1,6 +1,6 @@
 # Create a midi-to-drum mapping.
 
-# Each drum class corresponds to a specified instrument.
+# Each drum class corresponds to a specified instrument. General MIDI specifications.
 DRUM_CLASSES = [
     'Kick',
     'Snare',

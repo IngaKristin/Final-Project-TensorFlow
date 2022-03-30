@@ -6,7 +6,7 @@ MIN_NB_ONSETS = 5
 # Number of notes per drum loop matrix.
 NOTES_LENGTH = 32
 
-# Each drum class corresponds to a specified instrument. General MIDI specifications.
+# Each class corresponds to a specified instrument.
 DRUM_CLASSES = [
     'Kick',
     'Snare',
@@ -44,7 +44,7 @@ MIDI_DRUM_MAP = {
     53: 8   # Clap
 }
 
-DRUM_MIDI_MAP = [  # piano-roll to MIDI
+DRUM_MIDI_MAP = [  # piano-roll to MIDI - reversed order
     36,  # 0 Kick / Bass Drum 1
     40,  # 1 Snare / Electric Snare
     42,  # 2 Hi-hat Closed

@@ -1,3 +1,4 @@
-#Files
+#MacFiles
 .idea/workspace.xml
+.DS_Store
 *.mid

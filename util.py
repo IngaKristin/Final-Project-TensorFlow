@@ -12,6 +12,9 @@ MIN_NB_ONSETS = 5
 # Number of notes per drum loop matrix
 NOTES_LENGTH = 32
 
+# The batch_size for the training
+BATCH_SIZE = 100
+
 DRUM_CLASSES = [
    'Kick',
    'Snare',

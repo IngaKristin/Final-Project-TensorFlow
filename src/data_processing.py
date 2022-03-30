@@ -24,16 +24,16 @@ import pandas as pd
 
 
 # Download datasets
-if not os.path.exists("data/groove"):
+if not os.path.exists("../data/groove"):
     print("Download started")
     http_response = urlopen("https://storage.googleapis.com/magentadata/datasets/groove/groove-v1.0.0-midionly.zip")
     zipfile = ZipFile(BytesIO(http_response.read()))
-    zipfile.extractall(path="data")
+    zipfile.extractall(path="../data")
     print("Download finished")
 else:
     print("Load file from local")
 
-dataset = pd.read_csv("data/groove/info.csv")
+dataset = pd.read_csv("../data/groove/info.csv")
 
 dataset_cleaned = pd.DataFrame()
 
@@ -64,4 +64,4 @@ print("Translation finished!")
 #print(dataset_cleaned["style"].value_counts())
 
 # save cleaned_data as pickle file for later use
-dataset_cleaned.to_pickle("data/cleaned_data.pkl")
+dataset_cleaned.to_pickle("../data/cleaned_data.pkl")

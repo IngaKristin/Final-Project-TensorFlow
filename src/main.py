@@ -21,15 +21,15 @@ from Discriminator import Discriminator
 from training_loop import training_loop
 
 # Provide dataset
-if not os.path.exists("data/cleaned_data.pkl"):
+if not os.path.exists("../data/cleaned_data.pkl"):
     print("No .pickle file found, dataset will be created:")
     try:
         os.system("python data_processing.py")
-        dataset = pd.read_pickle("data/cleaned_data.pkl")
+        dataset = pd.read_pickle("../data/cleaned_data.pkl")
     except:
         print("Could not execute the data_processing.py file")
 else:
-    dataset = pd.read_pickle("data/cleaned_data.pkl")
+    dataset = pd.read_pickle("../data/cleaned_data.pkl")
 
 #dataset = dataset.iloc[:20]
 # solve the processing problem TODO: Übergangslösung

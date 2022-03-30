@@ -30,7 +30,7 @@ def training_loop(dataset, generator, discriminator, batch_size, epochs=10, visu
     :return: None
     """
     time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    train_path = f"./logs/gan/train" + time
+    train_path = f"../logs/gan/train" + time
     train_summary_writer = tf.summary.create_file_writer(train_path)
 
     # accuracy metric

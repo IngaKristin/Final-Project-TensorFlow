@@ -11,6 +11,9 @@ Created: 28.03.22, 14:51
 Author: LDankert
 """
 
+import os.path
+import pandas as pd
+
 from urllib.request import urlopen
 from io import BytesIO
 from zipfile import ZipFile
@@ -18,9 +21,6 @@ from tqdm import tqdm
 
 from util import CHOOSEN_GENRE, MIN_NB_ONSETS
 from preprocessing_functions import duplicate_multiple_styles, get_pianomatrices_of_drums
-
-import os.path
-import pandas as pd
 
 
 # Download datasets
@@ -60,8 +60,6 @@ print("Start translating midi into drum matrix:")
 dataset_cleaned["drum_matrices"] = [get_pianomatrices_of_drums(midi_file) for midi_file
                                     in tqdm(dataset_cleaned["midi_filename"])]
 print("Translation finished!")
-
-#print(dataset_cleaned["style"].value_counts())
 
 # save cleaned_data as pickle file for later use
 dataset_cleaned.to_pickle("../data/cleaned_data.pkl")

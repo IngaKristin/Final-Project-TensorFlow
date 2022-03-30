@@ -1,5 +1,11 @@
 # Create a midi-to-drum mapping.
 
+# Ignore drum loops with fewer onsets than MIN_NB_ONSETS when not much is happening.
+MIN_NB_ONSETS = 5
+
+# Number of notes per drum loop matrix.
+NOTES_LENGTH = 32
+
 # Each drum class corresponds to a specified instrument. General MIDI specifications.
 DRUM_CLASSES = [
     'Kick',
@@ -48,4 +54,12 @@ DRUM_MIDI_MAP = [  # piano-roll to MIDI
     51,  # 6 Cymbal
     63,  # 7 Percussion / Open Hi Conga
     39   # 8 Clap
+]
+
+CHOSEN_GENRE = [
+    "rock",
+    "funk",
+    "latin",
+    "jazz",
+    "hiphop"
 ]

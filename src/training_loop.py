@@ -27,14 +27,16 @@ def training_loop(dataset, generator, discriminator, batch_size, epochs=10, visu
     :param batch_size: (int) Batch size (as used in preprocessing) to create batches of fake beates
     :param epochs: (int) Number of epochs to train, default=10
     :param visualize: (boolean) whether the drum matrices during the training process, default=True
-    :return: None
+    :return generator_loss (lst): Loss value of the generator for every epoch
+    :return discriminator_loss (lst): Loss value of the discriminator for every epoch
+    :return discriminator_acc (lst): Accuracy value for every epoch
+    :return beats (lst): One drum matrix for each epoch
     """
-    time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    train_path = f"../logs/gan/train" + time
-    train_summary_writer = tf.summary.create_file_writer(train_path)
 
     # accuracy metric
     acc = tf.keras.metrics.BinaryAccuracy(threshold=0.5)
+
+    generator_loss, discriminator_loss, discriminator_acc, beats = [], [], [], []
 
     for epoch in trange(epochs, leave=True, unit='epoch', desc=f"Training progress"):
         acc_aggregator = []
@@ -58,8 +60,8 @@ def training_loop(dataset, generator, discriminator, batch_size, epochs=10, visu
 
                 # computation of accuracy
                 labels = tf.concat((tf.ones_like(real_output), tf.zeros_like(fake_output)), axis=0)
-                images = tf.concat((real_output, fake_output), axis=0)
-                acc_aggregator.append(acc(labels, images))
+                beats = tf.concat((real_output, fake_output), axis=0)
+                acc_aggregator.append(acc(labels, beats))
 
             gen_gradients = gen_tape.gradient(gen_loss, generator.trainable_variables)
             disc_gradients = disc_tape.gradient(disc_loss, discriminator.trainable_variables)
@@ -70,14 +72,16 @@ def training_loop(dataset, generator, discriminator, batch_size, epochs=10, visu
             # create 1 fake beat after each epoch
         fake_beat = generator(tf.random.normal(shape=(1, 288)), training=False)
 
-        # log metrics for tensorboard
         aggregated_acc = tf.reduce_mean(acc_aggregator)
-        with train_summary_writer.as_default():
-            tf.summary.scalar(name="Generator loss", data=gen_loss, step=epoch)
-            tf.summary.scalar(name="Discriminator loss", data=disc_loss, step=epoch)
-            tf.summary.scalar(name="Discriminator acc", data=aggregated_acc, step=epoch)
-            tf.summary.image(name="Generated beats", data=tf.expand_dims(fake_beat, -1), step=epoch)
+
+        # matrices for mlflow
+        generator_loss = generator_loss.append(gen_loss)
+        discriminator_loss = discriminator_loss.append(disc_loss)
+        discriminator_acc = discriminator_acc.append(aggregated_acc)
+        beats = beats.append(fake_beat)
 
         # visualization of generator progress throughout the epochs
         if visualize:
             plot_drum_matrix(fake_beat.numpy())
+
+        return generator_loss, discriminator_loss, discriminator_acc, beats

@@ -13,7 +13,7 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 
-from mlflow import log_param, set_tracking_uri
+from mlflow import log_param, log_metric, set_tracking_uri
 from util import BATCH_SIZE
 from Generator import Generator
 from Discriminator import Discriminator
@@ -23,7 +23,7 @@ from training_loop import training_loop
 parser = argparse.ArgumentParser(description="Main training file")
 parser.add_argument("-e", "--epochs", help="Number of training epochs", default=10)
 parser.add_argument("-s", "--save_model", help="Path to save the trained model", default=None)
-parser.add_argument("-v", "--visualize", action="store_true", help="visualize drum matrices between epochs")
+parser.add_argument("-v", "--visualize", action="store_true", help="visualize drum matrices between epochs", default=False)
 parser.add_argument("--RMSProp", type=float, help="Use Optimizer RMSProp learning rate x for training", default=None)
 parser.add_argument("--SGD", type=float, help="Use Optimizer Stochastic gradient descent learning rate x for training", default=None)
 parser.add_argument("--adam", type=float, help="Use Adam descent learning rate x for training", default=None)
@@ -80,7 +80,18 @@ generator = Generator(optimizer=optimizer)
 discriminator = Discriminator(optimizer=optimizer)
 
 # The final training process
-training_loop(data, generator, discriminator, BATCH_SIZE, epochs=args.epochs, visualize=args.visualize)
+gen_loss, disc_loss, disc_acc, beats = training_loop(data, generator, discriminator,
+                                                     BATCH_SIZE, epochs=args.epochs,
+                                                     visualize=args.visualize)
+# Save the results in mlflow
+log_metric("Generator Loss", gen_loss)
+log_metric("Discriminator Loss", disc_loss)
+log_metric("Discriminator Accuracy", disc_acc)
+log_metric("Epoch Beats", beats)
+
+# Save one drum matrix for mlflow
+fake_beat = Generator(tf.random.normal(shape=(1, 288)), training=False)
+log_metric("Generated Beat", fake_beat)
 
 # Save models
 Generator.save(f"../data/models/generators" + args.export_file)

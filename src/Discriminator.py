@@ -7,16 +7,15 @@ Author: LDankert
 """
 
 import tensorflow as tf
-from tensorflow.keras.layers import Input, Bidirectional, Dense, LSTM
+from tensorflow.keras.layers import Input, Bidirectional, Dense, LSTM, Reshape, BatchNormalization, Flatten, LeakyReLU
 
-from util import NOTES_LENGTH, DRUM_CLASSES
-
+from util import NOTES_LENGTH, DRUM_CLASSES, BATCH_SIZE
 
 sequence_length = NOTES_LENGTH  # The length of the incoming drum matrices sequences
 
 nb_notes = len(DRUM_CLASSES)  # Number of possible notes
 
-droprate = 0
+droprate = 0.4
 
 
 class Discriminator(tf.keras.Model):
@@ -34,13 +33,20 @@ class Discriminator(tf.keras.Model):
 
         self.loss_function = tf.keras.losses.BinaryCrossentropy()
 
-        self.input_layer = Input(shape=(sequence_length, nb_notes))
+        self.input_layer = Input(shape=(sequence_length, nb_notes,), batch_size=BATCH_SIZE)
         self.all_layers = [
             Bidirectional(LSTM(64, return_sequences=True, activation="tanh",
-                                             dropout=droprate, recurrent_dropout=droprate)),
-            Bidirectional(LSTM(64, return_sequences=True, activation="tanh",
-                                             dropout=droprate, recurrent_dropout=droprate)),
-            Dense(1, activation="sigmoid")
+                               dropout=droprate, recurrent_dropout=droprate)),
+            #BatchNormalization(),
+            Bidirectional(LSTM(64, return_sequences=False, activation="tanh",
+                               dropout=droprate, recurrent_dropout=droprate)),
+            #BatchNormalization(),
+            #Reshape(target_shape=(1,4096)),
+            #Dense(units=512, activation="sigmoid"),
+            #Dense(units=1, activation="sigmoid", kernel_regularizer=tf.keras.regularizers.L2(0.01)),
+            #Dense(units=1, activation="sigmoid", kernel_regularizer=tf.keras.regularizers.L2(0.01))
+            Dense(units=1, activation="sigmoid")
+            #Reshape(target_shape=(4096)),
         ]
 
         self.out = self.call(self.input_layer, training=True)

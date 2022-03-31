@@ -94,5 +94,5 @@ fake_beat = generator(tf.random.normal(shape=(1, 288)), training=False)
 log_param("Generated Beat", fake_beat)
 
 # Save models
-Generator.save(f"../data/models/generators" + args.export_file)
-Discriminator.save(f"../data/models/discriminator" + args.export_file)
+Generator.save(f"../data/models/generators" + optimizer.name + optimizer.learning_rate)
+Discriminator.save(f"../data/models/discriminator" + optimizer.name + optimizer.learning_rate)

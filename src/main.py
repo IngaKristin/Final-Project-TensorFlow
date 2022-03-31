@@ -18,12 +18,13 @@ from util import BATCH_SIZE
 from Generator import Generator
 from Discriminator import Discriminator
 from training_loop import training_loop
+from visual_audiolisation import plot_drum_matrix
 
 # Add arguments for running on grid
 parser = argparse.ArgumentParser(description="Main training file")
-parser.add_argument("-e", "--epochs", help="Number of training epochs", default=10)
+parser.add_argument("-e", "--epochs", type=int, help="Number of training epochs", default=10)
 parser.add_argument("-s", "--save_model", help="Path to save the trained model", default=None)
-parser.add_argument("-v", "--visualize", action="store_true", help="visualize drum matrices between epochs", default=False)
+parser.add_argument("-v", "--visualize", action="store_true", help="visualize drum matrices between epochs", default=True)
 parser.add_argument("--RMSProp", type=float, help="Use Optimizer RMSProp learning rate x for training", default=None)
 parser.add_argument("--SGD", type=float, help="Use Optimizer Stochastic gradient descent learning rate x for training", default=None)
 parser.add_argument("--adam", type=float, help="Use Adam descent learning rate x for training", default=None)
@@ -45,7 +46,7 @@ else:
     dataset = pd.read_pickle("../data/cleaned_data.pkl")
 
 # makes every drum matrix to a single training point
-data = np.vstack(dataset["drum_matrices"])
+data = np.vstack(dataset["drum_matrices"].iloc[:10])
 
 # form tensor dataset
 data = tf.data.Dataset.from_tensor_slices(data)
@@ -91,15 +92,22 @@ log_param("Epoch Beats", beats)
 
 # Save one drum matrix for mlflow
 fake_beat = generator(tf.random.normal(shape=(1, 288)), training=False)
+print(fake_beat.shape)
 log_param("Generated Beat", fake_beat)
 
 # Save models
-if args.RMSProp is not None:
-    Generator.save(f"../data/models/generators" + "RMSProp" + optimizer.learning_rate.numpy())
-    Discriminator.save(f"../data/models/discriminator" + "RMSProp" + optimizer.learning_rate.numpy())
-elif args.SGD is not None:
-    Generator.save(f"../data/models/generators" + "SGD" + optimizer.learning_rate.numpy())
-    Discriminator.save(f"../data/models/discriminator" + "SGD" + optimizer.learning_rate.numpy())
-elif args.adam is not None:
-    Generator.save(f"../data/models/generators" + "Adam" + optimizer.learning_rate.numpy())
-    Discriminator.save(f"../data/models/discriminator" + "Adam" + optimizer.learning_rate.numpy())
+#if args.RMSProp is not None:
+#    tf.saved_model.save(generator, f"../data/models/generators/RMSProp{str(optimizer.learning_rate.numpy())}")
+#    tf.saved_model.save(discriminator, f"../data/models/discriminator/RMSProp{str(optimizer.learning_rate.numpy())}")
+#elif args.SGD is not None:
+#    generator.save(filepath=(f"../data/models/generators/SGD{str(optimizer.learning_rate.numpy())}"))
+#    discriminator.save(filepath=(f"../data/models/discriminator/SGD{str(optimizer.learning_rate.numpy())}"))
+#elif args.adam is not None:
+#    generator.save(filepath=(f"../data/models/generators/Adam{str(optimizer.learning_rate.numpy())}"))
+#    discriminator.save(filepath=(f"../data/models/discriminator/Adam{str(optimizer.learning_rate.numpy())}"))
+
+# Second training loop for rock genre
+#generator = generator # TODO: rdundant
+#rock_discriminator = Discriminator()
+
+#roch_training_loop(rockdata, genredata, generator, rock_discriminator, BATCH_SIZE, epochs=args.epochs)

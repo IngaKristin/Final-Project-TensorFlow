@@ -2,8 +2,6 @@
 
 IANNwTF Seminar @uos Winter Term 2021/2022
 
-Authors: Léon Dankert, Vera Proiss, Inga Wohlert
-
 ## Table of Contents
 * [General Info](#general-info)
 * [Pipeline](#git-setup)

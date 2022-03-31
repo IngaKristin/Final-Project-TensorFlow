@@ -65,12 +65,12 @@ if args.RMSProp is not None:
     log_param("RMSProp", args.RMSProp)  # mlflow logs
     optimizer = tf.keras.optimizers.RMSprop(lr=args.RMSProp)
 
-if args.SGD is not None:
+elif args.SGD is not None:
     print(f"   Training with SGD and LR = {args.SGD}")
     log_param("SGD", args.SGD)  # mlflow logs
     optimizer = tf.keras.optimizers.SGD(lr=args.SGD)
 
-if args.adam is not None:
+elif args.adam is not None:
     print(f"   Training with SGD and LR = {args.adam}")
     log_param("Adam", args.adam)  # mlflow logs
     optimizer = tf.keras.optimizers.Adam(lr=args.adam)
@@ -94,5 +94,12 @@ fake_beat = generator(tf.random.normal(shape=(1, 288)), training=False)
 log_param("Generated Beat", fake_beat)
 
 # Save models
-Generator.save(f"../data/models/generators" + optimizer.name + optimizer.learning_rate)
-Discriminator.save(f"../data/models/discriminator" + optimizer.name + optimizer.learning_rate)
+if args.RMSProp is not None:
+    Generator.save(f"../data/models/generators" + "RMSProp" + optimizer.learning_rate.numpy())
+    Discriminator.save(f"../data/models/discriminator" + "RMSProp" + optimizer.learning_rate.numpy())
+elif args.SGD is not None:
+    Generator.save(f"../data/models/generators" + "SGD" + optimizer.learning_rate.numpy())
+    Discriminator.save(f"../data/models/discriminator" + "SGD" + optimizer.learning_rate.numpy())
+elif args.adam is not None:
+    Generator.save(f"../data/models/generators" + "Adam" + optimizer.learning_rate.numpy())
+    Discriminator.save(f"../data/models/discriminator" + "Adam" + optimizer.learning_rate.numpy())

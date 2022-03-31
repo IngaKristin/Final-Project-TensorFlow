@@ -12,6 +12,6 @@ eval "$(conda shell.bash hook)"
 conda activate iannwtf_final
 
 echo "    Training"
-python -m src.main -s $*
+python -m main -s $*
 
 conda deactivate

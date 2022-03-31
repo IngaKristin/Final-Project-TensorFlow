@@ -18,7 +18,7 @@ then
 elif [ $1 = grid ]
 then
     echo "[grid execution]"
-    cmd="qsub src/grid_search.sge"
+    cmd="qsub grid_search.sge"
 else
     echo "[ERROR! Argument not supported!]"
     exit 1

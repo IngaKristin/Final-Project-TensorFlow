@@ -53,7 +53,7 @@ print(f"Uses 5 most styles:{CHOOSEN_GENRE}")
 dataset_cleaned = dataset_cleaned[dataset_cleaned["style"].isin(CHOOSEN_GENRE)]
 
 # add correct file path to filename
-dataset_cleaned["midi_filename"] = "data/groove/" + dataset_cleaned["midi_filename"]
+dataset_cleaned["midi_filename"] = "../data/groove/" + dataset_cleaned["midi_filename"]
 
 # translates the midi file into a drum matrix
 print("Start translating midi into drum matrix:")

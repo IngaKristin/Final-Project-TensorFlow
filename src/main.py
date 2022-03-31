@@ -63,17 +63,17 @@ data = data.prefetch(20)
 if args.RMSProp is not None:
     print(f"   Training with RMSProp and LR = {args.RMSProp}")
     log_param("RMSProp", args.RMSProp)  # mlflow logs
-    optimizer = tf.keras.optimizer.RMSprop(lr=args.RMSProp)
+    optimizer = tf.keras.optimizers.RMSprop(lr=args.RMSProp)
 
 if args.SGD is not None:
     print(f"   Training with SGD and LR = {args.SGD}")
     log_param("SGD", args.SGD)  # mlflow logs
-    optimizer = tf.keras.optimizer.SGD(lr=args.SGD)
+    optimizer = tf.keras.optimizers.SGD(lr=args.SGD)
 
 if args.adam is not None:
     print(f"   Training with SGD and LR = {args.adam}")
     log_param("Adam", args.adam)  # mlflow logs
-    optimizer = tf.keras.optimizer.Adam(lr=args.adam)
+    optimizer = tf.keras.optimizers.Adam(lr=args.adam)
 
 # Initialise generator and discriminator
 generator = Generator(optimizer=optimizer)
@@ -84,14 +84,14 @@ gen_loss, disc_loss, disc_acc, beats = training_loop(data, generator, discrimina
                                                      BATCH_SIZE, epochs=args.epochs,
                                                      visualize=args.visualize)
 # Save the results in mlflow
-log_metric("Generator Loss", gen_loss)
-log_metric("Discriminator Loss", disc_loss)
-log_metric("Discriminator Accuracy", disc_acc)
-log_metric("Epoch Beats", beats)
+log_param("Generator Loss", gen_loss)
+log_param("Discriminator Loss", disc_loss)
+log_param("Discriminator Accuracy", disc_acc)
+log_param("Epoch Beats", beats)
 
 # Save one drum matrix for mlflow
-fake_beat = Generator(tf.random.normal(shape=(1, 288)), training=False)
-log_metric("Generated Beat", fake_beat)
+fake_beat = generator(tf.random.normal(shape=(1, 288)), training=False)
+log_param("Generated Beat", fake_beat)
 
 # Save models
 Generator.save(f"../data/models/generators" + args.export_file)

@@ -36,7 +36,7 @@ def training_loop(dataset, generator, discriminator, batch_size, epochs=10, visu
     # accuracy metric
     acc = tf.keras.metrics.BinaryAccuracy(threshold=0.5)
 
-    generator_loss, discriminator_loss, discriminator_acc, beats = [], [], [], []
+    generator_loss, discriminator_loss, discriminator_acc, fake_beats = [], [], [], []
 
     for epoch in trange(epochs, leave=True, unit='epoch', desc=f"Training progress"):
         acc_aggregator = []
@@ -78,7 +78,7 @@ def training_loop(dataset, generator, discriminator, batch_size, epochs=10, visu
         generator_loss = generator_loss.append(gen_loss)
         discriminator_loss = discriminator_loss.append(disc_loss)
         discriminator_acc = discriminator_acc.append(aggregated_acc)
-        beats = beats.append(fake_beat)
+        fake_beats = fake_beats.append(fake_beat)
 
         # visualization of generator progress throughout the epochs
         if visualize:

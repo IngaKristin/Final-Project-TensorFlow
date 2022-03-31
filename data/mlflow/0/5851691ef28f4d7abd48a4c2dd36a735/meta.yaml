@@ -1,0 +1,15 @@
+artifact_uri: ../data/mlflow/0/5851691ef28f4d7abd48a4c2dd36a735/artifacts
+end_time: 1648727774981
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: 5851691ef28f4d7abd48a4c2dd36a735
+run_uuid: 5851691ef28f4d7abd48a4c2dd36a735
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1648727525739
+status: 3
+tags: []
+user_id: ldankert

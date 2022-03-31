@@ -92,7 +92,6 @@ log_param("Epoch Beats", beats)
 
 # Save one drum matrix for mlflow
 fake_beat = generator(tf.random.normal(shape=(1, 288)), training=False)
-print(fake_beat.shape)
 log_param("Generated Beat", fake_beat)
 
 # Save models

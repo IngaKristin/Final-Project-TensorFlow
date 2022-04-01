@@ -18,6 +18,7 @@ from util import BATCH_SIZE
 from Generator import Generator
 from Discriminator import Discriminator
 from training_loop import training_loop
+from preprocessing_functions import data_processing
 from visual_audiolisation import plot_drum_matrix
 
 # Add arguments for running on grid
@@ -47,18 +48,7 @@ else:
 
 # makes every drum matrix to a single training point
 data = np.vstack(dataset["drum_matrices"].iloc[:10])
-
-# form tensor dataset
-data = tf.data.Dataset.from_tensor_slices(data)
-
-# change datatype to float 32
-data = data.map(lambda matrix: (tf.cast(matrix, tf.float32)))
-# shuffle the datasets
-data = data.shuffle(buffer_size=1000)
-# batch the datasets
-data = data.batch(BATCH_SIZE)
-# prefetch the datasets
-data = data.prefetch(20)
+data = data_processing(data)
 
 # Choose Optimizer
 if args.RMSProp is not None:
@@ -94,18 +84,10 @@ log_param("Epoch Beats", beats)
 fake_beat = generator(tf.random.normal(shape=(1, 288)), training=False)
 log_param("Generated Beat", fake_beat)
 
-# Save models
-#if args.RMSProp is not None:
-#    tf.saved_model.save(generator, f"../data/models/generators/RMSProp{str(optimizer.learning_rate.numpy())}")
-#    tf.saved_model.save(discriminator, f"../data/models/discriminator/RMSProp{str(optimizer.learning_rate.numpy())}")
-#elif args.SGD is not None:
-#    generator.save(filepath=(f"../data/models/generators/SGD{str(optimizer.learning_rate.numpy())}"))
-#    discriminator.save(filepath=(f"../data/models/discriminator/SGD{str(optimizer.learning_rate.numpy())}"))
-#elif args.adam is not None:
-#    generator.save(filepath=(f"../data/models/generators/Adam{str(optimizer.learning_rate.numpy())}"))
-#    discriminator.save(filepath=(f"../data/models/discriminator/Adam{str(optimizer.learning_rate.numpy())}"))
 
 # Second training loop for rock genre
+rock_data = dataset[dataset["style"] == "rock"]
+print(rock_data.head)
 #generator = generator # TODO: rdundant
 #rock_discriminator = Discriminator()
 

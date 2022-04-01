@@ -10,9 +10,10 @@ Author: LDankert
 """
 import pandas as pd
 import numpy as np
+import tensorflow as tf
 import pretty_midi
 
-from util import MIDI_DRUM_MAP, DRUM_CLASSES, MIN_NB_ONSETS, NOTES_LENGTH
+from util import MIDI_DRUM_MAP, DRUM_CLASSES, MIN_NB_ONSETS, NOTES_LENGTH, BATCH_SIZE
 
 
 def duplicate_multiple_styles(data):
@@ -102,3 +103,24 @@ def get_pianomatrices_of_drums(midi_file, binary="False"):
         print(f"The following notes aren't initialized {missing_notes}")
 
     return np.array(drum_matrices)
+
+
+def data_processing(data):
+    """:TODO
+
+    :param data: :TODO
+    :return:
+    """
+    # from tensor dataset
+    data = tf.data.Dataset.from_tensor_slices(data)
+
+    # change datatype to float 32
+    data = data.map(lambda matrix: (tf.cast(matrix, tf.float32)))
+    # shuffle the datasets
+    data = data.shuffle(buffer_size=1000)
+    # batch the datasets
+    data = data.batch(BATCH_SIZE)
+    # prefetch the datasets
+    data = data.prefetch(20)
+
+    return data

@@ -47,7 +47,7 @@ else:
     dataset = pd.read_pickle("../data/cleaned_data.pkl")
 
 # makes every drum matrix to a single training point
-data = np.vstack(dataset["drum_matrices"].iloc[:10])
+data = np.vstack(dataset["drum_matrices"])
 data = data_processing(data)
 
 # Choose Optimizer
@@ -62,7 +62,7 @@ elif args.SGD is not None:
     optimizer = tf.keras.optimizers.SGD(lr=args.SGD)
 
 elif args.adam is not None:
-    print(f"   Training with SGD and LR = {args.adam}")
+    print(f"   Training with Adam and LR = {args.adam}")
     log_param("Adam", args.adam)  # mlflow logs
     optimizer = tf.keras.optimizers.Adam(lr=args.adam)
 

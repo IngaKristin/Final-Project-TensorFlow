@@ -109,7 +109,7 @@ def genre_training_loop(genre_dataset, other_dataset, discriminator, batch_size,
         acc_aggregator = []
         disc_loss = 0
 
-        for drum_matrix in tqdm(genre_dataset):  # visualise epoch process
+        for genre_matrix, other_matrix in tqdm(zip(genre_dataset, other_dataset)):  # visualise epoch process
             #for drum_matrix in dataset:
             # random noise for generator
             noise = tf.random.normal(shape=(batch_size, sequence_length*nb_notes))
@@ -117,8 +117,8 @@ def genre_training_loop(genre_dataset, other_dataset, discriminator, batch_size,
             with tf.GradientTape() as disc_tape:
 
                 # discriminator's output for other genre and correct genre
-                correct_output = discriminator(drum_matrix, training=True)
-                other_genre_output = discriminator(np.random.choice(other_dataset), training=True)
+                correct_output = discriminator(genre_matrix, training=True)
+                other_genre_output = discriminator(other_matrix, training=True)
 
                 # loss functions for generator and discriminator, including the L2 regularization term
                 disc_loss = discriminator.loss_function(tf.ones_like(correct_output), correct_output) + discriminator.loss_function(

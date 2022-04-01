@@ -17,15 +17,17 @@ from mlflow import log_param, log_metric, set_tracking_uri
 from util import BATCH_SIZE
 from Generator import Generator
 from Discriminator import Discriminator
-from training_loop import training_loop
+from training_loop import training_loop, genre_training_loop
 from preprocessing_functions import data_processing
-from visual_audiolisation import plot_drum_matrix
+from visual_audiolisation import plot_drum_matrix, play_drum_matrix
+from scipy.io import wavfile
 
 # Add arguments for running on grid
 parser = argparse.ArgumentParser(description="Main training file")
 parser.add_argument("-e", "--epochs", type=int, help="Number of training epochs", default=10)
 parser.add_argument("-s", "--save_model", help="Path to save the trained model", default=None)
-parser.add_argument("-v", "--visualize", action="store_true", help="visualize drum matrices between epochs", default=True)
+parser.add_argument("-v", "--visualize", action="store_true", help="visualize drum matrices between epochs")
+parser.add_argument("-t", "--second-training", action="store_true", help="Let the Genre training part run")
 parser.add_argument("--RMSProp", type=float, help="Use Optimizer RMSProp learning rate x for training", default=None)
 parser.add_argument("--SGD", type=float, help="Use Optimizer Stochastic gradient descent learning rate x for training", default=None)
 parser.add_argument("--adam", type=float, help="Use Adam descent learning rate x for training", default=None)
@@ -70,7 +72,8 @@ elif args.adam is not None:
 generator = Generator(optimizer=optimizer)
 discriminator = Discriminator(optimizer=optimizer)
 
-# The final training process
+# The first training process
+print(f"First training process")
 gen_loss, disc_loss, disc_acc, beats = training_loop(data, generator, discriminator,
                                                      BATCH_SIZE, epochs=args.epochs,
                                                      visualize=args.visualize)
@@ -82,13 +85,69 @@ log_param("Epoch Beats", beats)
 
 # Save one drum matrix for mlflow
 fake_beat = generator(tf.random.normal(shape=(1, 288)), training=False)
-log_param("Generated Beat", fake_beat)
+log_param("Generated Beat", fake_beat[0])
+
+print(f"Mlflow data saved:")
+
+# Create Audio data
+audio_data = play_drum_matrix(fake_beat[0])
+# Save Models (sadly dont work) and wav files
+if args.RMSProp is not None:
+    #generator.save(f"../data/models/generator/RMSProp{str(args.RMSProp)}")
+    #discriminator.save(f"../data/models/discriminator/RMSProp{str(args.RMSProp)}")
+    wavfile.write(f"../data/beats/RMSProp{args.RMSProp}.wav", 44100, audio_data)
+
+elif args.SGD is not None:
+    #generator.save(f"../data/models/generator/SGD{str(args.SGD)}")
+    #discriminator.save(f"../data/models/discriminator/SGD{str(args.SGD)}")
+    wavfile.write(f"../data/beats/SGD{args.SGD}.wav", 44100, audio_data)
+
+elif args.adam is not None:
+    #generator.save(f"../data/models/generator/Adam{str(args.adam)}")
+    #discriminator.save(f"../data/models/discriminator/Adam{str(args.adam)}")
+    wavfile.write(f"../data/beats/Adam{args.adam}.wav", 44100, audio_data)
 
 
 # Second training loop for rock genre
-rock_data = dataset[dataset["style"] == "rock"]
-print(rock_data.head)
-#generator = generator # TODO: rdundant
-#rock_discriminator = Discriminator()
 
-#roch_training_loop(rockdata, genredata, generator, rock_discriminator, BATCH_SIZE, epochs=args.epochs)
+# Split into rock and not rock styles
+genre_data = dataset[dataset["style"] == "rock"]
+other_data = dataset[dataset["style"] != "rock"]
+
+genre_data = np.vstack(genre_data["drum_matrices"])
+other_data = np.vstack(other_data["drum_matrices"])
+
+# Length of the data
+len_g = len(genre_data)
+len_o = len(other_data)
+
+# make both dataset the same length
+if len_o <= len_g:
+    for _ in range(np.abs(len_o - len_g)):
+        other_data = np.append(other_data, np.expand_dims(other_data[np.random.choice(range(len_o))], axis=0), axis=0)
+if len_o > len_g:
+    for _ in range(np.abs(len_o - len_g)):
+        genre_data = np.append(genre_data, np.expand_dims(genre_data[np.random.choice(range(len_o))], axis=0), axis=0)
+
+# preprocessing
+genre_data = data_processing(genre_data)
+other_data = data_processing(other_data)
+
+# Trains the discriminator for just one genre
+print("\nGenre Discrimination Training")
+disc2_loss, disc2_acc = genre_training_loop(genre_data, other_data, discriminator, BATCH_SIZE,
+                                            epochs=args.epochs)
+
+# Trains the generator for the rock style
+print("\nGenre Rock Discriminator")
+gen3_loss, disc3_loss, disc3_acc, beats3 = training_loop(genre_data, generator, discriminator,
+                                                         BATCH_SIZE, epochs=args.epochs,
+                                                         visualize=args.visualize)
+# Create one file
+final_beat = generator(tf.random.normal(shape=(1, 288)), training=False)
+print(final_beat.numpy())
+# Plot one final beat
+plot_drum_matrix(final_beat.numpy())
+# Form wav file
+audio_data = play_drum_matrix(final_beat[0])
+wavfile.write("../data/beats/final_rock_beat.wav", 44100, audio_data)

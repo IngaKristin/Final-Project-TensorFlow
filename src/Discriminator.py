@@ -37,16 +37,9 @@ class Discriminator(tf.keras.Model):
         self.all_layers = [
             Bidirectional(LSTM(64, return_sequences=True, activation="tanh",
                                dropout=droprate, recurrent_dropout=droprate)),
-            #BatchNormalization(),
             Bidirectional(LSTM(64, return_sequences=False, activation="tanh",
                                dropout=droprate, recurrent_dropout=droprate)),
-            #BatchNormalization(),
-            #Reshape(target_shape=(1,4096)),
-            #Dense(units=512, activation="sigmoid"),
-            #Dense(units=1, activation="sigmoid", kernel_regularizer=tf.keras.regularizers.L2(0.01)),
-            #Dense(units=1, activation="sigmoid", kernel_regularizer=tf.keras.regularizers.L2(0.01))
             Dense(units=1, activation="sigmoid")
-            #Reshape(target_shape=(4096)),
         ]
 
         self.out = self.call(self.input_layer, training=True)

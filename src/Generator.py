@@ -29,9 +29,6 @@ class Generator(tf.keras.Model):
 
         self.loss_function = tf.keras.losses.BinaryCrossentropy()
 
-        L2_lambda = 0.01
-        dropout_rate = 0.2
-
         self.input_layer = Input(shape=(sequence_length*nb_notes,))
         self.all_layers = [
             Dense(1024),

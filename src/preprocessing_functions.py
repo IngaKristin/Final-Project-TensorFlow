@@ -121,6 +121,6 @@ def data_processing(data):
     # batch the datasets
     data = data.batch(BATCH_SIZE)
     # prefetch the datasets
-    data = data.prefetch(20)
+    data = data.prefetch(200)
 
     return data

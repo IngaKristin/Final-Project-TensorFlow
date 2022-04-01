@@ -13,7 +13,7 @@ MIN_NB_ONSETS = 5
 NOTES_LENGTH = 32
 
 # The batch_size for the training
-BATCH_SIZE = 100
+BATCH_SIZE = 200
 
 DRUM_CLASSES = [
    'Kick',

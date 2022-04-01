@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -N grid_search
-#$ -l mem=2G
+#$ -l mem=4G
 #$ -cwd
 #$ -pe default 2
 #$ -o $HOME

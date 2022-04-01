@@ -127,7 +127,7 @@ if len_o <= len_g:
         other_data = np.append(other_data, np.expand_dims(other_data[np.random.choice(range(len_o))], axis=0), axis=0)
 if len_o > len_g:
     for _ in range(np.abs(len_o - len_g)):
-        genre_data = np.append(genre_data, np.expand_dims(genre_data[np.random.choice(range(len_o))], axis=0), axis=0)
+        genre_data = np.append(genre_data, np.expand_dims(genre_data[np.random.choice(range(len_g))], axis=0), axis=0)
 
 # preprocessing
 genre_data = data_processing(genre_data)
@@ -137,14 +137,23 @@ other_data = data_processing(other_data)
 print("\nGenre Discrimination Training")
 disc2_loss, disc2_acc = genre_training_loop(genre_data, other_data, discriminator, BATCH_SIZE,
                                             epochs=args.epochs)
+# Save the results in mlflow
+log_param("Discriminator2 Loss", disc_loss)
+log_param("Discriminator2 Accuracy", disc_acc)
 
 # Trains the generator for the rock style
 print("\nGenre Rock Discriminator")
 gen3_loss, disc3_loss, disc3_acc, beats3 = training_loop(genre_data, generator, discriminator,
                                                          BATCH_SIZE, epochs=args.epochs,
                                                          visualize=args.visualize)
+# Save the results in mlflow
+log_param("Rock Generator Loss", gen_loss)
+log_param("Rock Discriminator Loss", disc_loss)
+log_param("Rock Discriminator Accuracy", disc_acc)
+log_param("Epoch Rock Beats", beats)
 # Create one file
 final_beat = generator(tf.random.normal(shape=(1, 288)), training=False)
+log_param("Final Beat", final_beat)
 print(final_beat.numpy())
 # Plot one final beat
 plot_drum_matrix(final_beat.numpy())

@@ -3,10 +3,8 @@ This module contains all preprocessing functions
 contains:
     duplicate_multiple_style(data)
     get_pianomatrices_of_drums(midi_file, binary)
+    data_processing(data)
 
-Created: 28.03.22, 15:25
-
-Author: LDankert
 """
 import pandas as pd
 import numpy as np
@@ -106,10 +104,11 @@ def get_pianomatrices_of_drums(midi_file, binary="False"):
 
 
 def data_processing(data):
-    """:TODO
+    """ This function preprocesses the data sets and turn it into a batched, prefetched
+        tensorlow dataset
 
-    :param data: :TODO
-    :return:
+    :param data (np.array): A numpy array, containing drum matrices
+    :return (tf.data.Dataset): the processed dataset
     """
     # from tensor dataset
     data = tf.data.Dataset.from_tensor_slices(data)

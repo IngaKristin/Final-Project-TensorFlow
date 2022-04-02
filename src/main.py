@@ -1,9 +1,10 @@
 """
-This is the Main file for our Final project
-
-Created: 29.03.22, 21:09
-
-Author: LDankert
+This is the Main file for our Final project. This file should be run to start the data
+processing and training loops.
+Run with flags:
+-e --epochs (int): Number of training epochs
+-v --visualize (bool): Visualise drum matrices between training epochs
+-t --second-training: enables the second training process
 
 """
 
@@ -25,9 +26,8 @@ from scipy.io import wavfile
 # Add arguments for running on grid
 parser = argparse.ArgumentParser(description="Main training file")
 parser.add_argument("-e", "--epochs", type=int, help="Number of training epochs", default=10)
-parser.add_argument("-s", "--save_model", help="Path to save the trained model", default=None)
-parser.add_argument("-v", "--visualize", action="store_true", help="visualize drum matrices between epochs")
-parser.add_argument("-t", "--second-training", action="store_true", help="Let the Genre training part run")
+parser.add_argument("-v", "--visualize", action="store_true", help="visualize drum matrices between epochs", default=False)
+parser.add_argument("-t", "--second-training", action="store_true", help="Let the Genre training part run", default=True)
 parser.add_argument("--RMSProp", type=float, help="Use Optimizer RMSProp learning rate x for training", default=None)
 parser.add_argument("--SGD", type=float, help="Use Optimizer Stochastic gradient descent learning rate x for training", default=None)
 parser.add_argument("--adam", type=float, help="Use Adam descent learning rate x for training", default=None)
@@ -109,54 +109,53 @@ elif args.adam is not None:
 
 
 # Second training loop for rock genre
+if args.second-training:
+    # Split into rock and not rock styles
+    genre_data = dataset[dataset["style"] == "rock"]
+    other_data = dataset[dataset["style"] != "rock"]
 
-# Split into rock and not rock styles
-genre_data = dataset[dataset["style"] == "rock"]
-other_data = dataset[dataset["style"] != "rock"]
+    genre_data = np.vstack(genre_data["drum_matrices"])
+    other_data = np.vstack(other_data["drum_matrices"])
 
-genre_data = np.vstack(genre_data["drum_matrices"])
-other_data = np.vstack(other_data["drum_matrices"])
+    # Length of the data
+    len_g = len(genre_data)
+    len_o = len(other_data)
 
-# Length of the data
-len_g = len(genre_data)
-len_o = len(other_data)
+    # make both dataset the same length
+    if len_o <= len_g:
+        for _ in range(np.abs(len_o - len_g)):
+            other_data = np.append(other_data, np.expand_dims(other_data[np.random.choice(range(len_o))], axis=0), axis=0)
+    if len_o > len_g:
+        for _ in range(np.abs(len_o - len_g)):
+            genre_data = np.append(genre_data, np.expand_dims(genre_data[np.random.choice(range(len_g))], axis=0), axis=0)
 
-# make both dataset the same length
-if len_o <= len_g:
-    for _ in range(np.abs(len_o - len_g)):
-        other_data = np.append(other_data, np.expand_dims(other_data[np.random.choice(range(len_o))], axis=0), axis=0)
-if len_o > len_g:
-    for _ in range(np.abs(len_o - len_g)):
-        genre_data = np.append(genre_data, np.expand_dims(genre_data[np.random.choice(range(len_g))], axis=0), axis=0)
+    # preprocessing
+    genre_data = data_processing(genre_data)
+    other_data = data_processing(other_data)
 
-# preprocessing
-genre_data = data_processing(genre_data)
-other_data = data_processing(other_data)
+    # Trains the discriminator for just one genre
+    print("\nGenre Discrimination Training")
+    disc2_loss, disc2_acc = genre_training_loop(genre_data, other_data, discriminator, BATCH_SIZE,
+                                                epochs=args.epochs)
+    # Save the results in mlflow
+    log_param("Discriminator2 Loss", disc2_loss)
+    log_param("Discriminator2 Accuracy", disc2_acc)
 
-# Trains the discriminator for just one genre
-print("\nGenre Discrimination Training")
-disc2_loss, disc2_acc = genre_training_loop(genre_data, other_data, discriminator, BATCH_SIZE,
-                                            epochs=args.epochs)
-# Save the results in mlflow
-log_param("Discriminator2 Loss", disc_loss)
-log_param("Discriminator2 Accuracy", disc_acc)
-
-# Trains the generator for the rock style
-print("\nGenre Rock Discriminator")
-gen3_loss, disc3_loss, disc3_acc, beats3 = training_loop(genre_data, generator, discriminator,
-                                                         BATCH_SIZE, epochs=args.epochs,
-                                                         visualize=args.visualize)
-# Save the results in mlflow
-log_param("Rock Generator Loss", gen_loss)
-log_param("Rock Discriminator Loss", disc_loss)
-log_param("Rock Discriminator Accuracy", disc_acc)
-log_param("Epoch Rock Beats", beats)
-# Create one file
-final_beat = generator(tf.random.normal(shape=(1, 288)), training=False)
-log_param("Final Beat", final_beat)
-print(final_beat.numpy())
-# Plot one final beat
-plot_drum_matrix(final_beat.numpy())
-# Form wav file
-audio_data = play_drum_matrix(final_beat[0])
-wavfile.write("../data/beats/final_rock_beat.wav", 44100, audio_data)
+    # Trains the generator for the rock style
+    print("\nGenre Rock Discriminator")
+    gen3_loss, disc3_loss, disc3_acc, beats3 = training_loop(genre_data, generator, discriminator,
+                                                             BATCH_SIZE, epochs=args.epochs,
+                                                             visualize=args.visualize)
+    # Save the results in mlflow
+    log_param("Rock Generator Loss", gen3_loss)
+    log_param("Rock Discriminator Loss", disc3_loss)
+    log_param("Rock Discriminator Accuracy", disc3_acc)
+    log_param("Epoch Rock Beats", beats3)
+    # Create one final rock beat
+    final_beat = generator(tf.random.normal(shape=(1, 288)), training=False)
+    log_param("Final Beat", final_beat)
+    # Plot one final beat
+    plot_drum_matrix(final_beat.numpy())
+    # Form wav file
+    audio_data = play_drum_matrix(final_beat[0])
+    wavfile.write("../data/beats/final_rock_beat.wav", 44100, audio_data)

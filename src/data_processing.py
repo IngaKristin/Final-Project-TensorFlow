@@ -1,14 +1,9 @@
 """
-This module for processes the data. The data for training only should contain the
+This module processes the data. The data for training only should contain the
 beat "beat_type" not fill, because the fills are way too short. As well all unnecessary
 information are dropped.
 
-TODO:
-    Talk about the fill and duration < 5 problem
-
-Created: 28.03.22, 14:51
-
-Author: LDankert
+Is called by main.py to download and process the data.
 """
 
 import os.path
@@ -33,6 +28,7 @@ if not os.path.exists("../data/groove"):
 else:
     print("Load file from local")
 
+# Read the CSV file
 dataset = pd.read_csv("../data/groove/info.csv")
 
 dataset_cleaned = pd.DataFrame()
@@ -43,10 +39,10 @@ for _, row in dataset.iterrows():
 
 # remove all midi files that are not long enough
 dataset_cleaned = dataset_cleaned[dataset_cleaned.duration > MIN_NB_ONSETS]
-#dataset_cleaned = dataset_cleaned[dataset_cleaned.beat_type != "fill"]
+#dataset_cleaned = dataset_cleaned[dataset_cleaned.beat_type != "fill"] # another way to filter the short beats
 
 # just keep the filepath and style
-dataset_cleaned = dataset_cleaned[["style", "midi_filename"]]
+dataset_cleaned = dataset_cleaned[["style", "midi_filename"]].iloc[:5]
 
 # just keep the styles with the most songs
 print(f"Uses 5 most styles:{CHOOSEN_GENRE}")
@@ -55,11 +51,11 @@ dataset_cleaned = dataset_cleaned[dataset_cleaned["style"].isin(CHOOSEN_GENRE)]
 # add correct file path to filename
 dataset_cleaned["midi_filename"] = "../data/groove/" + dataset_cleaned["midi_filename"]
 
-# translates the midi file into a drum matrix
+# translates the midi file into a drum matrix, takes a while
 print("Start translating midi into drum matrix:")
-dataset_cleaned["drum_matrices"] = [get_pianomatrices_of_drums(midi_file) for midi_file
-                                    in tqdm(dataset_cleaned["midi_filename"])]
+dataset_cleaned["drum_matrices"] = [get_pianomatrices_of_drums(midi_file, False) for midi_file
+                                    in tqdm(dataset_cleaned["midi_filename"])] # tqdm visualise progress
 print("Translation finished!")
 
 # save cleaned_data as pickle file for later use
-dataset_cleaned.to_pickle("../data/cleaned_data.pkl")
+dataset_cleaned.to_pickle("../data/test.pkl")

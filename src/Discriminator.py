@@ -1,9 +1,6 @@
 """
 This is the class of the Discriminator, for the GAN model
 
-Created: 29.03.22, 19:00
-
-Author: LDankert
 """
 
 import tensorflow as tf

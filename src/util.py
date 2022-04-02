@@ -1,9 +1,6 @@
 """
 This module contains every global variable and global lists
 
-Created: 28.03.22, 14:40
-
-Author: LDankert
 """
 
 # Ignore drum loops with less onsets than MIN_NB_ONSETS when not much is happening

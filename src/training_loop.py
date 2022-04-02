@@ -1,9 +1,11 @@
 """
-training_loop
+This module contains the training loops for the GANs. The first one uses a generator to
+train a discriminator, and the second one uses negative labels but from real data to
+train the genre-specific discriminator.
+contains:
+    training_loop(dataset, generator, discriminator, batch_size, epochs=10, visualize=False):
+    genre_training_loop(genre_dataset, other_dataset, discriminator, batch_size, epochs=10):
 
-Created: 29.03.22, 21:06
-
-Author: LDankert
 """
 import datetime
 import tensorflow as tf

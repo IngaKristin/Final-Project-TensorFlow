@@ -5,9 +5,6 @@ contains:
     play_drum_matrix(matrix, tempo):
     get_audio_from_matrix(matrix, tempo):
 
-Created: 29.03.22, 15:33
-
-Author: LDankert
 """
 
 import numpy as np

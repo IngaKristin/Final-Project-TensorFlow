@@ -1,9 +1,6 @@
 """
 This is the class of the Generator, for the GAN model
 
-Created: 29.03.22, 20:20
-
-Author: LDankert
 """
 import tensorflow as tf
 
@@ -14,6 +11,7 @@ sequence_length = NOTES_LENGTH  # The length of the incoming drum matrices seque
 
 nb_notes = len(DRUM_CLASSES)  # Number of possible notes
 
+
 class Generator(tf.keras.Model):
     """Generator part of the GAN model"""
 
@@ -21,7 +19,7 @@ class Generator(tf.keras.Model):
         """ Initializer
 
         :param optimizer: (tf.keras.optimizers.Optimizer) optimizer to use in training,
-                        default RMSprop with learing rate 0.0004.
+                        default RMSprop with learning rate 0.0004.
         """
         super(Generator, self).__init__()
 

@@ -42,7 +42,7 @@ dataset_cleaned = dataset_cleaned[dataset_cleaned.duration > MIN_NB_ONSETS]
 #dataset_cleaned = dataset_cleaned[dataset_cleaned.beat_type != "fill"] # another way to filter the short beats
 
 # just keep the filepath and style
-dataset_cleaned = dataset_cleaned[["style", "midi_filename"]].iloc[:5]
+dataset_cleaned = dataset_cleaned[["style", "midi_filename"]]
 
 # just keep the styles with the most songs
 print(f"Uses 5 most styles:{CHOOSEN_GENRE}")

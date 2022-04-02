@@ -39,7 +39,3 @@ options, to start the pipeline:
 To see the results of the grid computing run in the profect folder:
 `mlflow ui --backend-store-uri data/mlflow` and navigate in your browser to 
 `http://127.0.0.1:5000` to see the data.
-
-
-
-* [Overleaf Project](https://www.overleaf.com/project/62174cc1a2c7f12e89ab0af4)
